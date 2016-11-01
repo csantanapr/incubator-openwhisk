@@ -81,6 +81,7 @@ SCRIPT
    
   # Configure Custom Database
 $script_db = <<SCRIPT
+source /etc/environment
 export ANSIBLE_REMOTE_TEMP=/home/vagrant/openwhisk/ansible/tmp
 export OW_DB=#{ENV['OW_DB']}
 export OW_DB_USERNAME=#{ENV['OW_DB_USERNAME']}
@@ -97,23 +98,27 @@ else
   export OW_DB_PORT=#{ENV['OW_DB_PORT']}
 fi
 
-cd /home/vagrant/openwhisk/ansible
+cd ${ANSIBLE_HOME}
+rm -f db_local.ini
 su vagrant -c 'ansible-playbook -i environments/local setup.yml'
 su vagrant -c 'ansible-playbook -i environments/local prereq.yml'
 SCRIPT
 
-  # Configure Default CouchDB
+# Configure Default CouchDB
 $couch_db = <<COUCH_DB
+source /etc/environment
 export ANSIBLE_REMOTE_TEMP=/home/vagrant/openwhisk/ansible/tmp
-cd /home/vagrant/openwhisk/ansible
+cd ${ANSIBLE_HOME}
+rm -f db_local.ini
 su vagrant -c 'ansible-playbook -i environments/local setup.yml'
 su vagrant -c 'ansible-playbook -i environments/local prereq.yml'
 su vagrant -c 'ansible-playbook -i environments/local couchdb.yml'
 COUCH_DB
 
 $init_db = <<INIT_DB
+source /etc/environment
 export ANSIBLE_REMOTE_TEMP=/home/vagrant/openwhisk/ansible/tmp
-cd /home/vagrant/openwhisk/ansible
+cd ${ANSIBLE_HOME}
 su vagrant -c 'ansible-playbook -i environments/local initdb.yml'
 INIT_DB
   
@@ -140,6 +145,7 @@ $script_end = <<SCRIPT
   su vagrant -c 'ansible-playbook -i environments/local wipe.yml'
   su vagrant -c 'ansible-playbook -i environments/local openwhisk.yml'
   su vagrant -c 'ansible-playbook -i environments/local postdeploy.yml'
+  su vagrant -c 'ansible-playbook -i environments/local routemgmt.yml'
   
   # Setup OpenWhisk CLI
   su vagrant -c 'mkdir ${HOME}/bin'
@@ -157,6 +163,15 @@ $script_end = <<SCRIPT
   # This allows user to see how to configure the wsk cli outside the VM 
   wsk property set --apihost 192.168.33.13 --namespace guest --auth `cat ${ANSIBLE_HOME}/files/auth.guest`
   wsk action invoke /whisk.system/utils/echo -p message hello --blocking --result
+
+  echo "Setting up API Gateway"
+  cd ${OPENWHISK_HOME}/core/apigw/gateway-service-gw-controller
+  #DC_HOST needs to be set before running docker-compose
+  export DC_HOST=192.168.33.13
+  docker-compose build
+  docker-compose up -d
+  
+
 SCRIPT
 
   config.vm.provision "script_end", type: "shell", keep_color: true, inline: $script_end
