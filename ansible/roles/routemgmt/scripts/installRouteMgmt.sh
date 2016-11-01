@@ -46,7 +46,8 @@ $WSK_CLI -i --apihost "$APIHOST" package update --auth "$AUTH"  --shared no "$NA
 -p username $DB_USERNAME \
 -p password $DB_PASSWORD \
 -p dbname $DB_GWAPI \
--p gwUrl "https://api-gw.cumulus.apim.ibmcloud.com/gws/dmi/v1"
+-p gwUrl "http://192.168.99.100:3100/v1"
+
 
 
 echo Installing routemgmt actions
