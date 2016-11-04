@@ -148,7 +148,7 @@ class gatewayRoutesApi(
        get {
          collectionPrefix { segment => {
            entity(as[String]) { pattern =>
-             parameters("basepath", "operation"?"","relpath"?"") { (basepath, operation,relpath) =>
+             parameters("basepath"?"", "operation"?"","relpath"?"") { (basepath, operation,relpath) =>
                var postBody = "{" + "\"namespace\":" +"\"" + segment + "\"," + "\"basepath\":" +"\"" + basepath + "\"," + "\"operation\":" +"\"" + operation + "\"," + "\"relpath\":" +"\"" + relpath + "\"}";
                if(operation == "" && relpath == ""){
                    postBody = "{" + "\"namespace\":" +"\"" + segment + "\"," + "\"basepath\":" +"\"" + basepath + "\"}";
