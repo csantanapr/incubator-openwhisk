@@ -16,21 +16,11 @@
 
 package whisk.core.controller
 
-import whisk.core.entity.EntityPath
-import whisk.core.entity.Identity
 import scala.concurrent._
-import scala.concurrent.{ Future , Promise }
-import scala.concurrent.duration._
-import scala.util.{Failure,Success}
 import spray.json._
-import whisk.core.entity.WhiskAuth
-import whisk.core.entity.Subject
 import spray.http._
-import spray.client.pipelining._
 import akka.actor.ActorSystem
 import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
-import spray.http.BasicHttpCredentials
 import spray.http.StatusCodes.OK
 import spray.http.AllOrigins
 import spray.http.HttpHeaders.`Access-Control-Allow-Origin`
@@ -45,8 +35,6 @@ import spray.json.pimpAny
 import spray.routing.Directive.pimpApply
 import spray.routing.Directives
 import spray.routing.Route
-import spray.http.Uri
-import spray.http.Uri.Path
 import whisk.common.TransactionId
 import whisk.core.WhiskConfig
 import whisk.core.WhiskConfig.whiskVersionDate
@@ -150,7 +138,7 @@ protected[controller] class RestAPIVersion_v1(
             sendCorsHeaders {
                 (pathEndOrSingleSlash & get) {
                     complete(OK, info)
-                }  ~ authenticate(basicauth) {
+                } ~ authenticate(basicauth) {
                     user =>
                         namespaces.routes(user) ~
                             pathPrefix(Collection.NAMESPACES) {
@@ -159,7 +147,7 @@ protected[controller] class RestAPIVersion_v1(
                                     rules.routes(user) ~
                                     activations.routes(user) ~
                                     packages.routes(user) ~
-								    gatewayRoutesApi.routes(user) 
+                                    gatewayRoutesApi.routes(user)
                             }
                 } ~ pathPrefix(swaggeruipath) {
                     getFromDirectory("/swagger-ui/")
@@ -198,7 +186,7 @@ protected[controller] class RestAPIVersion_v1(
     private val rules = new RulesApi(apipath, apiversion, verbosity)
     private val activations = new ActivationsApi(apipath, apiversion, verbosity)
     private val packages = new PackagesApi(apipath, apiversion, verbosity)
-    private val gatewayRoutesApi = new gatewayRoutesApi(apipath, apiversion, verbosity)
+    private val gatewayRoutesApi = new gatewayRoutesApi(apipath, apiversion, verbosity,config,actorSystem)
 
     class NamespacesApi(
         val apipath: String,
@@ -226,8 +214,6 @@ protected[controller] class RestAPIVersion_v1(
         extends WhiskActionsApi with WhiskServices {
         override val whiskConfig = config
         setVerbosity(verbosity)
-        info(this, s"actionSequenceLimit '${config.actionSequenceLimit}'")
-        assert(config.actionSequenceLimit.toInt > 0)
     }
 
     class TriggersApi(
@@ -288,188 +274,7 @@ protected[controller] class RestAPIVersion_v1(
         override val whiskConfig = config
         setVerbosity(verbosity)
     }
-		
-		
-		
-	class gatewayRoutesApi(
-        val apipath: String,
-        val apiversion: String,
-        val verbosity: LogLevel){
-					
-	   /**
-        * Handles invoking action for gateway route
-        *
-        * @return Future[String] from action result
-        */	
-       def invokeActionCreate(requestBody: String ) : Future[String]  = {
-		
-            val url = Uri(s"http://localhost:${config.servicePort}")
-            val actionPath = Path("/api/v1") / "namespaces" / "whisk.system" / "actions" / "routemgmt" / "createRoute"  
-		    val key = Await.result(WhiskAuth.get(authStore, Subject("whisk.system"),false)(TransactionId.unknown), 5.seconds)
-		    val validCredentials = BasicHttpCredentials(key.authkey.uuid.toString, key.authkey.key.toString)
-		    val pipeline: HttpRequest => Future[HttpResponse] = (
-                             addCredentials(validCredentials)
-                            ~> sendReceive 					
-            )
-		
-            val p = Promise[String]()
-            val response: Future[HttpResponse] = pipeline(Post(url.withPath(actionPath).toString.concat("?blocking=true"), HttpEntity(ContentTypes.`application/json`, requestBody))  )
-            response.onComplete({
-                case Success(result: HttpResponse) => {
-			      p trySuccess result.entity.asString
-                }
-                case Failure(error) => {
-			      p tryFailure error	 
-                }
-   
-	        })
 
-            p.future
-	    }
-		
-	   /**
-        * Handles invoking action for gateway route
-        *
-        * @return Future[String] from action result
-        */	
-       def invokeActionGet(requestBody: String ) : Future[String]  = {
-		
-            val url = Uri(s"http://localhost:${config.servicePort}")
-            val actionPath = Path("/api/v1") / "namespaces" / "whisk.system" / "actions" / "routemgmt" / "getApi"  
-		    val key = Await.result(WhiskAuth.get(authStore, Subject("whisk.system"),false)(TransactionId.unknown), 5.seconds)
-		    val validCredentials = BasicHttpCredentials(key.authkey.uuid.toString, key.authkey.key.toString)
-		    val pipeline: HttpRequest => Future[HttpResponse] = (
-                             addCredentials(validCredentials)
-                            ~> sendReceive 					
-            )
-		
-            val p = Promise[String]()
-            val response: Future[HttpResponse] = pipeline(Post(url.withPath(actionPath).toString.concat("?blocking=true"), HttpEntity(ContentTypes.`application/json`, requestBody))  )
-            response.onComplete({
-                case Success(result: HttpResponse) => {
-			      p trySuccess result.entity.asString
-                }
-                case Failure(error) => {
-			      p tryFailure error	 
-                }
-   
-	        })
-
-            p.future
-	    }
-		
-	   /**
-        * Handles invoking action for gateway route
-        *
-        * @return Future[String] from action result
-        */	
-       def invokeActionDelete(requestBody: String ) : Future[String]  = {
-		
-            val url = Uri(s"http://localhost:${config.servicePort}")
-            val actionPath = Path("/api/v1") / "namespaces" / "whisk.system" / "actions" / "routemgmt" / "deleteApi"  
-		    val key = Await.result(WhiskAuth.get(authStore, Subject("whisk.system"),false)(TransactionId.unknown), 5.seconds)
-		    val validCredentials = BasicHttpCredentials(key.authkey.uuid.toString, key.authkey.key.toString)
-		    val pipeline: HttpRequest => Future[HttpResponse] = (
-                             addCredentials(validCredentials)
-                            ~> sendReceive 					
-            )
-		
-            val p = Promise[String]()
-            val response: Future[HttpResponse] = pipeline(Post(url.withPath(actionPath).toString.concat("?blocking=true"), HttpEntity(ContentTypes.`application/json`, requestBody))  )
-            response.onComplete({
-                case Success(result: HttpResponse) => {
-			      p trySuccess result.entity.asString
-                }
-                case Failure(error) => {
-			      p tryFailure error	 
-                }
-   
-	        })
-
-            p.future
-	    }
-		
-	    /**
-         * Handles the api gateway routes
-         */	
-	    def routes(user: Identity)(implicit transid: TransactionId) = {
-            lazy val collectionOps = pathEndOrSingleSlash & get & post			
-            lazy val collectionPrefix = pathPrefix( (EntityPath.DEFAULT.toString.r | Segment) / "routes")
-            /** Extracts the HTTP method which is used to determine privilege for resource. */
-            //val requestMethod = extract(_.request.method)
- 			
-		   get {
-			
-			collectionPrefix { segment => {				
-				   entity(as[String]) { pattern =>
-									 parameters("basepath", "operation"?"","relpath"?"") { (basepath, operation,relpath) => 
-										    var postBody = "{" + "\"namespace\":" +"\"" + segment + "\"," + "\"basepath\":" +"\"" + basepath + "\"," + "\"operation\":" +"\"" + operation + "\"," + "\"relpath\":" +"\"" + relpath + "\"}";	
-											if(operation == "" && relpath == ""){
-									           postBody = "{" + "\"namespace\":" +"\"" + segment + "\"," + "\"basepath\":" +"\"" + basepath + "\"}";		
-								            }
-								            if(operation == "" && relpath != "" ){
-                                               postBody = "{" + "\"namespace\":" +"\"" + segment + "\"," + "\"basepath\":" +"\"" + basepath + "\"," + "\"relpath\":" +"\"" + relpath + "\"}";	 
-								            }
-								            if(operation != "" && relpath ==""){
-								               postBody = "{" + "\"namespace\":" +"\"" + segment + "\"," + "\"basepath\":" +"\"" + basepath + "\"," + "\"operation\":" +"\"" + operation +"\"}"	 
-								            }
-											
-																					
-											complete (OK, invokeActionGet(postBody))
-
-                                     }
-
-                   } 
-			 }
-           }
-				
-			
-			
-		   } ~
-		   post {
-			
-			collectionPrefix { segment => {				
-				   entity(as[String]) { pattern =>
-                      complete (OK, invokeActionCreate(pattern))
-                   } 
-			 }
-           }
-			
-			
-		   } ~
-		   delete{
-			
-			collectionPrefix { segment => {				
-				   entity(as[String]) { pattern =>
-					  parameters("basepath", "operation" ?"","relpath"?"","force"?"false") { (basepath, operation,relpath,force) => 
-								 var postBody = "{" + "\"namespace\":" +"\"" + segment + "\"," + "\"basepath\":" +"\"" + basepath + "\"," + "\"force\":"  + force + "," + "\"operation\":" +"\"" + operation + "\"," + "\"relpath\":" +"\"" + relpath + "\"}";		
-								 if(operation == "" && relpath == ""){
-									 postBody = "{" + "\"namespace\":" +"\"" + segment + "\"," + "\"force\":"  + force + "," + "\"basepath\":" +"\"" + basepath + "\"}";		
-								 }
-								 if(operation == "" && relpath != "" ){
-                                     postBody = "{" + "\"namespace\":" +"\"" + segment + "\"," + "\"force\":" + force + "," + "\"basepath\":" +"\"" + basepath + "\"," + "\"relpath\":" +"\"" + relpath + "\"}";	 
-								 }
-								 if(operation != "" && relpath ==""){
-								     postBody = "{" + "\"namespace\":" +"\"" + segment + "\"," + "\"force\":" + force + "," + "\"basepath\":" +"\"" + basepath + "\"," + "\"operation\":" +"\"" + operation +"\"}"	 
-								 }
-																				  
-																	 
-                                 complete (OK, invokeActionDelete(postBody))
-                   } 
-			 }
-           }
-				
-			
-			
-		   }
-			
-		}
-		}
-		
-		
-	 }	
-		
-		
     /**
      * Handles GET /invokers URI.
      *
@@ -483,5 +288,4 @@ protected[controller] class RestAPIVersion_v1(
         }
     }
 
-	
 }
