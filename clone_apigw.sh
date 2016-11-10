@@ -1,5 +1,6 @@
 #!/bin/bash
 
+rm -rf core/apigw
 mkdir core/apigw
 pushd core/apigw
 git clone git@github.ibm.com:apimesh/gateway-service-gw-controller.git
