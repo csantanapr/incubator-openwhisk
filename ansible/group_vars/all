@@ -60,6 +60,17 @@ db:
   - guest
   - whisk.system
 
+apigateway:
+  port:
+    api: 9000
+    mgmt: 9001
+  git:
+    repo: https://github.com/openwhisk/apigateway.git
+    dest: "{{ openwhisk_home }}/core/apigateway"
+
+redis:
+  port: 6379
+
 linux:
   version: 4.4.0-31
 

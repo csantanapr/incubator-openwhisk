@@ -52,4 +52,4 @@ ansible/roles/nginx/files/*cert.pem
 core/swiftAction/actionproxy.py
 core/swift3Action/actionproxy.py
 
-core/apigw
+core/apigateway

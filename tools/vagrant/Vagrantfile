@@ -146,6 +146,7 @@ $script_end = <<SCRIPT
   su vagrant -c 'ansible-playbook -i environments/local openwhisk.yml'
   su vagrant -c 'ansible-playbook -i environments/local postdeploy.yml'
   su vagrant -c 'ansible-playbook -i environments/local routemgmt.yml'
+  su vagrant -c 'ansible-playbook -i environments/local apigateway.yml'
   
   # Setup OpenWhisk CLI
   su vagrant -c 'mkdir ${HOME}/bin'
@@ -164,13 +165,6 @@ $script_end = <<SCRIPT
   wsk property set --apihost 192.168.33.13 --namespace guest --auth `cat ${ANSIBLE_HOME}/files/auth.guest`
   wsk action invoke /whisk.system/utils/echo -p message hello --blocking --result
 
-  echo "Setting up API Gateway"
-  cd ${OPENWHISK_HOME}/core/apigw/gateway-service-gw-controller
-  #DC_HOST needs to be set before running docker-compose
-  export DC_HOST=192.168.33.13
-  docker-compose build
-  docker-compose up -d
-  
 
 SCRIPT
 
