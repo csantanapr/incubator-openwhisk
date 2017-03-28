@@ -12,6 +12,8 @@ services:
 env:
   global:
     - TERM=dumb
+    - secure: "oXNGJpvNIYHyDI4yZEN4J9zrpcuLXk13u80YJrkQqDZo3b820Oz/XHHCfHaxylH6QOr9ryrhG/kOXy8L4D+fQByIawLQ4nkf6Qe6ErLz+KZTv2CWFt7/2K0/ZFmuzwX+VMTj72XrY6QkbefH52tQgrQibtiijtx7LzWjpEw1xnrxHH9t+mrbEXK8FeEeo0Z8KxNCclB/PjbP7AjJzblfhk2NCPgmSilfaG280uws6k/PZk2hV/NRj1Wgx8JZPd3bmlq1jQYCjbK1MYzXPoxq8f4hTs2udC98eeKR2cZSddWEnkPzMqe3o4SyUA0QtrPz50YwXnwFF8tyWbgdXoTmVx5KeG+Xthl04oSpfbl6CbriR7h47BeB/liHSR8F9KKPVuib5TLM6zsc8C25R6MlIJnRLu+5xShrfuNP2Rs0LCIIrrHoOZk+WYdqrwC68cr/GBQjumE/6D8yBZkUk1zHlohHtrps8CX2XIf9ck9G2mVTmRSYdNP7gasciNG7HLJyNW67hauoXbGbfwy1W/qWIClrQzuk99gQp9BZsYEW2AiulQlil/0Yte0GILzz2ZpAE2oKTHu7nF2Hxoc8yEB8tHnfSR9F/Hi7962opLXnIEwim93ikA1qAVj2yxe6DEKb040TBPTpSK78wr7SOm7K2+mM8sv/cnZY67pZnUbDy5A="
+    - secure: "QFFYkKFlF8UFz85zKjn9HMSDPI85QKzNWHnkQv3bTr1lIwh1n/4+LzqqqNdWf5zpVqssJezpZUvS2V695n8uAbTrXpce9iTkUfKiDIboD5Y4acolxQoJm9RsBj77fVGBCA+SaaJDFIEqrwCsy7fzuJ2kDYqTS5JkcbFNP2xb1vQWD8uQGSlSbBrss0w9CxwCPKJkvO6ICXwjgxPZYzKAs0IkCrcGyjsMES1gxLckwm465QBGApfe7QzOb/xX0WO9irnhY1ErhFOGwZ5m8F9xvMrXd26P9jiV0wM5h02JyCLq5eVwTSxujqcjhXGkcjVmpy2iCYdZZvq6OZ8YawlPCgB7sT9GenwiDtElpYa6fhnKB9CoiHZ1S03DnZJiHS8abfa+CZ8x7PIjdowruLPlXSJFOvLkE+pJjX2Ji2eP0beeMsJWm+jTc2QVHH1/ohg0dGV7tLfllKX1OneIU41x3MHCg7iPw6UvmduD+Tn+Hp5qKJV9ttKPO/D16UCm9fYcX+WRrt+XKgoS0AUlNOxsCRy8WE5JZk3oKiRw0ToQAxLVacekwq4QOGheHlyb8jyKqtR3fyki7vR2h8T2M1qSr33sehYZsKjGGR3ZrBM2tHzi2buwKV5svMApBNSwTukj9Xgh4lbzvgkD8lYXxBRZRbon+NedPoxZzy+xlNqh19E="
 
 notifications:
   email: false
@@ -38,3 +40,9 @@ script:
   - ./tools/travis/build.sh
   - ansible-playbook -i ansible/environments/local ansible/logs.yml # collect logs regardless of build exit
   - ./tools/travis/box-upload.py "/home/travis/build/openwhisk/openwhisk/logs" "$TRAVIS_BUILD_ID-$TRAVIS_BRANCH.tar.gz"
+
+deploy:
+  provider: script
+  script: ./tools/travis/deploy.sh
+  on:
+    branch: master
