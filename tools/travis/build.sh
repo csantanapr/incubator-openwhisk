@@ -30,10 +30,10 @@ $ANSIBLE_CMD openwhisk.yml
 
 cd $ROOTDIR
 cat whisk.properties
-./gradlew :tests:testLean
+#./gradlew :tests:testLean
 
-cd $ROOTDIR/ansible
-$ANSIBLE_CMD logs.yml
+#cd $ROOTDIR/ansible
+#$ANSIBLE_CMD logs.yml
 
-cd $ROOTDIR
-tools/build/checkLogs.py logs
+#cd $ROOTDIR
+#tools/build/checkLogs.py logs
