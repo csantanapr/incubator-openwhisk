@@ -44,5 +44,6 @@ script:
 deploy:
   provider: script
   script: ./tools/travis/deploy.sh
+  skip_cleanup: true
   on:
     branch: master
