@@ -2,7 +2,7 @@
 set -eu
 
 docker_image_prefix="testing"
-dockerhub_image_prefix="openwhisk"
+dockerhub_image_prefix="csantanapr"
 docker login -u "${DOCKER_USER}" -p "${DOCKER_PASS}"
 
 #capture couchdb setup
