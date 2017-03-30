@@ -28,4 +28,4 @@ docker push "${dockerhub_image_prefix}/couchdb"
 #  docker push "${dockerhub_image_prefix}/${container}"
 #done
 
-./gradlew distDocker -PdockerImagePrefix=${dockerhub_image_prefix} -PdockerRegistry=docker.io
+./gradlew distDocker -PdockerImagePrefix=${dockerhub_image_prefix} -PdockerRegistry=docker.io -x tests:dat:blackbox:badproxy:distDocker -x tests:dat:blackbox:badaction:distDocker -x sdk:docker:distDocker -x tools:cli:distDocker -x core:nodejsActionBase:distDocker
