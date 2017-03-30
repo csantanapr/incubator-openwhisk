@@ -26,6 +26,9 @@ cd $ROOTDIR
 cd $ROOTDIR/ansible
 
 $ANSIBLE_CMD wipe.yml
+dockerhub_image_prefix="csantanapr"
+docker commit couchdb "${dockerhub_image_prefix}/couchdb"
+
 $ANSIBLE_CMD openwhisk.yml
 
 cd $ROOTDIR
