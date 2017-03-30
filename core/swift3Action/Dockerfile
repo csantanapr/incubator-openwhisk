@@ -3,7 +3,8 @@
 FROM ibmcom/swift-ubuntu:3.0.2
 
 # Upgrade and install basic Python dependencies
-RUN apt-get -y install --fix-missing python2.7 python-gevent python-flask zip
+RUN apt-get -y update \
+ && apt-get -y install --fix-missing python2.7 python-gevent python-flask zip
 
 # Add the action proxy
 RUN mkdir -p /actionProxy
