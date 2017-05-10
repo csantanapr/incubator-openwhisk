@@ -58,7 +58,7 @@ node("ubuntu&&xenial") {
         sh "$ANSIBLE_CMD couchdb.yml"
         sh "$ANSIBLE_CMD initdb.yml"
         sh "$ANSIBLE_CMD wipe.yml"
-        sh "$ANSIBLE_CMD apigateway.yml -e mode=clean "
+        sh "$ANSIBLE_CMD apigateway.yml -e mode=clean"
         sh "$ANSIBLE_CMD apigateway.yml"
         sh "$ANSIBLE_CMD openwhisk.yml --become-user=$USER -e mode=clean"
         sh "$ANSIBLE_CMD openwhisk.yml"
