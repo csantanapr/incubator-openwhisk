@@ -15,9 +15,10 @@
     - '{{ docker_image_prefix }}/java8action'
   when: docker_registry != ""
 
-- name: determine docker root dir
-  uri:  url="http://{{ inventory_hostname }}:{{ docker.port }}/info" return_content=yes
-  register: dockerInfo
+#
+#- name: determine docker root dir
+#  uri:  url="http://{{ inventory_hostname }}:{{ docker.port }}/info" return_content=yes
+#  register: dockerInfo
 
 - name: ensure invoker log directory is created with permissions
   file:
@@ -54,7 +55,7 @@
         -v /sys/fs/cgroup:/sys/fs/cgroup
         -v /run/runc:/run/runc
         -v {{whisk_logs_dir}}/invoker{{play_hosts.index(inventory_hostname)}}:/logs
-        -v {{dockerInfo["json"]["DockerRootDir"]}}/containers/:/containers
+        -v /var/lib/docker/containers/:/containers
         -v {{ docker_sock | default('/var/run/docker.sock') }}:/var/run/docker.sock
         -p {{invoker.port + play_hosts.index(inventory_hostname)}}:8080
         {{docker_registry}}{{ docker_image_prefix }}/invoker:{{docker_image_tag}}
