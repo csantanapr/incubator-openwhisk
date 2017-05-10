@@ -61,7 +61,7 @@ node("ubuntu&&xenial") {
         sh "$ANSIBLE_CMD apigateway.yml -e mode=clean"
         sh "$ANSIBLE_CMD apigateway.yml"
         sh "$ANSIBLE_CMD openwhisk.yml --become-user=$USER -e mode=clean"
-        sh "$ANSIBLE_CMD openwhisk.yml"
+        sh "$ANSIBLE_CMD openwhisk.yml --become-user=$USER"
         sh "$ANSIBLE_CMD postdeploy.yml"
       }
       cat whisk.properties
