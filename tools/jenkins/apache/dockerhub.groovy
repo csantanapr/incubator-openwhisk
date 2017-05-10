@@ -52,7 +52,9 @@ node("ubuntu&&xenial") {
       sh "ansible --version"
       sh "ansible-playbook --version"
       dir('ansible') {
-        def ANSIBLE_CMD = "ansible-playbook -i environments/local"
+        def dockerhub_prefix = "csantanapr"
+
+        def ANSIBLE_CMD = "ansible-playbook -i environments/local -e docker_image_prefix=$dockerhub_prefix"
         sh "$ANSIBLE_CMD setup.yml"
         sh "$ANSIBLE_CMD couchdb.yml -e mode=clean"
         sh "$ANSIBLE_CMD couchdb.yml"
