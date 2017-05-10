@@ -16,14 +16,14 @@ node("ubuntu&&xenial") {
       sh "pip install --user httplib2==0.9.2"
     }
     checkout([$class: 'GitSCM',
-            branches: [[name: '*/master']],
+            branches: [[name: '*/jenkins_experiments']],
             doGenerateSubmoduleConfigurations: false,
             extensions: [
                 [$class: 'CleanBeforeCheckout'],
                 [$class: 'CloneOption', noTags: true, reference: '', shallow: true]
             ],
             submoduleCfg: [],
-            userRemoteConfigs: [[url: 'https://github.com/openwhisk/openwhisk.git']]
+            userRemoteConfigs: [[url: 'https://github.com/csantanapr/openwhisk.git']]
         ])
   }
 
