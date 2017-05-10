@@ -177,7 +177,7 @@ docker:
   #user:
   version: 1.12.0-0~trusty
   storagedriver: overlay
-  port: 2376
+  port: 2375
   restart:
     policy: always
 
