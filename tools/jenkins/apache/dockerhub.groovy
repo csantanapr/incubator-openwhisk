@@ -36,13 +36,13 @@ node("ubuntu&&xenial") {
       }
       
       def dockerhub_prefix = "csantanapr"
-      /*
-      def PUSH_CMD = "./gradlew distDocker -PdockerRegistry=docker.io -PdockerImagePrefix=${dockerhub_prefix} -x tests:dat:blackbox:badproxy:distDocker -x tests:dat:blackbox:badaction:distDocker -x sdk:docker:distDocker -x tools:cli:distDocker"
+      
+      def PUSH_CMD = "./gradlew distDocker -PdockerRegistry=docker.io -PdockerImagePrefix=${dockerhub_prefix} -x tests:dat:blackbox:badproxy:distDocker -x tests:dat:blackbox:badaction:distDocker -x sdk:docker:distDocker"
       def gitCommit = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
       def shortCommit = gitCommit.take(7)
       sh "${PUSH_CMD} -PdockerImageTag=latest"
       sh "${PUSH_CMD} -PdockerImageTag=${shortCommit}"
-      */
+      
 
     }
   }
