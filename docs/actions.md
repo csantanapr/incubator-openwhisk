@@ -43,7 +43,7 @@ Review the following steps and examples to create your first JavaScript action.
 
 2. Create an action from the following JavaScript function. For this example, the action is called 'hello'.
 
-  ```
+  ```bash
   wsk action create hello hello.js
   ```
   ```
@@ -52,7 +52,7 @@ Review the following steps and examples to create your first JavaScript action.
 
 3. List the actions that you have created:
 
-  ```
+  ```sh
   wsk action list
   ```
   ```
