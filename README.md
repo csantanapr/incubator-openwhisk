@@ -14,6 +14,7 @@ OpenWhisk is a cloud-first distributed event-based programming service. It provi
 * [Issues](#issues)
 
 ### Quick Start
+typo
 
 A [Vagrant](http://vagrantup.com) machine is the easiest way to run OpenWhisk on Mac, Windows PC or GNU/Linux.
 Download and install [VirtualBox](https://www.virtualbox.org/wiki/Downloads) and [Vagrant](https://www.vagrantup.com/downloads.html) for your operating system and architecture.
