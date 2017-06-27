@@ -41,7 +41,7 @@ class WskBasicSwift3DefaultTests
     implicit val wskprops = WskProps()
     val wsk = new Wsk
     val defaultAction = Some(TestUtils.getTestActionFilename("hello.swift"))
-    lazy val currentSwiftDefaultKind = "swift:3"
+    lazy val currentSwiftDefaultKind = "swift:3.1.1"
 
     behavior of "Swift runtime"
 
