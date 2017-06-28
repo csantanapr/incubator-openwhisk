@@ -41,6 +41,7 @@ node_modules
 
 # IntelliJ
 .idea
+*/scala/out/
 
 # Ansible
 ansible/environments/docker-machine/hosts
