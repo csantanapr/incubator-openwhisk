@@ -1,2 +1,2 @@
-FROM openwhisk/nodejs6action:1.1.0
+FROM csantanapr/nodejs6action:pr_2
 
