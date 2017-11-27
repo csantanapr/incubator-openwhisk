@@ -16,6 +16,12 @@
     repo_update={{ item.value.repo_update }}
   when: item.value.repo_update is defined
 
+- set_fact:
+    skip_catalog_install="{{ item.value.skip | default(false) }}"
+
+- debug:
+    msg: "skip for {{item.value.url}} is {{skip_catalog_install}}"
+
 - name: "ensure catalog_location directory exists"
   file:
     path: "{{ catalog_location }}"
@@ -32,3 +38,4 @@
   shell: ./installCatalog.sh {{ catalog_auth_key }} {{ api_host }} {{ cli.path }} chdir="{{ catalog_location }}/packages"
   environment:
     OPENWHISK_HOME: "{{ openwhisk_home }}"
+  when: skip_catalog_install == false
