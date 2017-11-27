@@ -19,9 +19,6 @@
 - set_fact:
     skip_catalog_install="{{ item.value.skip | default(false) }}"
 
-- debug:
-    msg: "skip for {{item.value.url}} is {{skip_catalog_install}}"
-
 - name: "ensure catalog_location directory exists"
   file:
     path: "{{ catalog_location }}"
