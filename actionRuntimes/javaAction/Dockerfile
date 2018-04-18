@@ -1,1 +1,1 @@
-FROM openwhisk/java8action:1.0.1
+FROM csantanapr/java8action:pr-24-openjdk
