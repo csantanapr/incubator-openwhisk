@@ -2,6 +2,9 @@
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fcsantanapr%2Fincubator-openwhisk.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fcsantanapr%2Fincubator-openwhisk?ref=badge_large)
+
 # this work for additional information regarding copyright ownership.
 # The ASF licenses this file to You under the Apache License, Version 2.0
 # (the "License"); you may not use this file except in compliance with
@@ -23,6 +26,7 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Join Slack](https://img.shields.io/badge/join-slack-9B69A0.svg)](http://slack.openwhisk.org/)
 [![codecov](https://codecov.io/gh/apache/incubator-openwhisk/branch/master/graph/badge.svg)](https://codecov.io/gh/apache/incubator-openwhisk)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fcsantanapr%2Fincubator-openwhisk.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fcsantanapr%2Fincubator-openwhisk?ref=badge_shield)
 
 OpenWhisk is a cloud-first distributed event-based programming service. It provides a programming model to upload event handlers to a cloud service, and register the handlers to respond to various events. Learn more at [http://openwhisk.incubator.apache.org](http://openwhisk.incubator.apache.org).
 
