@@ -111,11 +111,8 @@ class MesosContainerFactory(config: WhiskConfig,
                                memory: ByteSize,
                                cpuShares: Int)(implicit config: WhiskConfig, logging: Logging): Future[Container] = {
     implicit val transid = tid
-    val image = if (userProvidedImage) {
-      actionImage.publicImageName
-    } else {
-      actionImage.localImageName(config.dockerRegistry, config.dockerImagePrefix, Some(config.dockerImageTag))
-    }
+    val image = actionImage.publicImageName
+
     val constraintStrings = if (userProvidedImage) {
       mesosConfig.blackboxConstraints
     } else {

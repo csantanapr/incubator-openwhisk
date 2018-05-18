@@ -51,12 +51,20 @@ class ExecManifestTests extends FlatSpec with WskActorSystem with StreamLogging 
       "pre/img" -> ImageName("img", Some("pre")),
       "pre/img:t" -> ImageName("img", Some("pre"), Some("t")),
       "pre1/pre2/img:t" -> ImageName("img", Some("pre1/pre2"), Some("t")),
-      "pre1/pre2/img" -> ImageName("img", Some("pre1/pre2")))
+      "pre1/pre2/img" -> ImageName("img", Some("pre1/pre2")),
+      "r:443/img" -> ImageName("img", Some("r:443")),
+      "r:443/img:123" -> ImageName("img", Some("r:443"), Some("123")),
+      "r:443/pre1/pre2/img" -> ImageName("img", Some("r:443/pre1/pre2")),
+      "r:443/pre1/pre2/img:t" -> ImageName("img", Some("r:443/pre1/pre2"), Some("t")),
+      "r:443/pre1/pre2/img:123" -> ImageName("img", Some("r:443/pre1/pre2"), Some("123")))
       .foreach {
-        case (s, v) => ImageName.fromString(s) shouldBe Success(v)
+        case (s, v) =>
+          withClue(s) {
+            ImageName.fromString(s) shouldBe Success(v)
+          }
       }
 
-    Seq("ABC", "x:8080/abc", "p/a:x:y").foreach { s =>
+    Seq("ABC", "x_y:8080/abc", "x/abc:8080:tag", "x/abc:8080/abc", "p/a:x:y").foreach { s =>
       a[DeserializationException] should be thrownBy ImageName.fromString(s).get
     }
   }
@@ -174,14 +182,7 @@ class ExecManifestTests extends FlatSpec with WskActorSystem with StreamLogging 
       (ExecManifest.ImageName(name, Some("pre")), s"pre/$name"),
       (ExecManifest.ImageName(name, None, Some("t")), s"$name:t"),
       (ExecManifest.ImageName(name, Some("pre"), Some("t")), s"pre/$name:t")).foreach {
-      case (image, exp) =>
-        image.publicImageName shouldBe exp
-
-        image.localImageName("", "", None) shouldBe image.tag.map(t => s"$name:$t").getOrElse(s"$name:latest")
-        image.localImageName("", "p", None) shouldBe image.tag.map(t => s"p/$name:$t").getOrElse(s"p/$name:latest")
-        image.localImageName("r", "", None) shouldBe image.tag.map(t => s"r/$name:$t").getOrElse(s"r/$name:latest")
-        image.localImageName("r", "p", None) shouldBe image.tag.map(t => s"r/p/$name:$t").getOrElse(s"r/p/$name:latest")
-        image.localImageName("r", "p", Some("tag")) shouldBe s"r/p/$name:tag"
+      case (image, exp) => image.publicImageName shouldBe exp
     }
   }
 

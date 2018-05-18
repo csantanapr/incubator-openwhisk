@@ -159,21 +159,6 @@ protected[core] object ExecManifest {
     }
 
     /**
-     * The internal name of the image for an action kind. It overrides
-     * the prefix with an internal name. Optionally overrides tag.
-     */
-    def localImageName(registry: String, prefix: String, tagOverride: Option[String] = None): String = {
-      val r = Option(registry)
-        .filter(_.nonEmpty)
-        .map { reg =>
-          if (reg.endsWith("/")) reg else reg + "/"
-        }
-        .getOrElse("")
-      val p = Option(prefix).filter(_.nonEmpty).map(_ + "/").getOrElse("")
-      r + p + name + ":" + tagOverride.orElse(tag).getOrElse(ImageName.defaultImageTag)
-    }
-
-    /**
      * Overrides equals to allow match on undefined tag or when tag is latest
      * in this or that.
      */
@@ -193,6 +178,7 @@ protected[core] object ExecManifest {
     protected val defaultImageTag = "latest"
     private val componentRegex = """([a-z0-9._-]+)""".r
     private val tagRegex = """([\w.-]{0,128})""".r
+    private val registryRegex = """([a-z0-9.-]+)(:\d+)?""".r
 
     /**
      * Constructs an ImageName from a string. This method checks that the image name conforms
@@ -203,7 +189,6 @@ protected[core] object ExecManifest {
     def fromString(s: String): Try[ImageName] =
       Try {
         val parts = s.split("/")
-
         val (name, tag) = parts.last.split(":") match {
           case Array(componentRegex(s))              => (s, None)
           case Array(componentRegex(s), tagRegex(t)) => (s, Some(t))
@@ -211,9 +196,18 @@ protected[core] object ExecManifest {
         }
 
         val prefixParts = parts.dropRight(1)
-        if (!prefixParts.forall(componentRegex.pattern.matcher(_).matches)) {
+
+        // the first component may be a registry with a port specified
+        if (!prefixParts.headOption.forall(
+              r => componentRegex.pattern.matcher(r).matches || registryRegex.pattern.matcher(r).matches())) {
+          throw DeserializationException("image registry or prefix not is not valid")
+        }
+
+        // skip first component, since it is already checked
+        if (!prefixParts.drop(1).forall(componentRegex.pattern.matcher(_).matches)) {
           throw DeserializationException("image prefix not is not valid")
         }
+
         val prefix = if (prefixParts.nonEmpty) Some(prefixParts.mkString("/")) else None
 
         ImageName(name, prefix, tag)

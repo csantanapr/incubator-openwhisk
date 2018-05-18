@@ -66,11 +66,7 @@ class KubernetesContainerFactory(label: String, config: WhiskConfig)(implicit ac
                                userProvidedImage: Boolean,
                                memory: ByteSize,
                                cpuShares: Int)(implicit config: WhiskConfig, logging: Logging): Future[Container] = {
-    val image = if (userProvidedImage) {
-      actionImage.publicImageName
-    } else {
-      actionImage.localImageName(config.dockerRegistry, config.dockerImagePrefix, Some(config.dockerImageTag))
-    }
+    val image = actionImage.publicImageName
 
     KubernetesContainer.create(
       tid,

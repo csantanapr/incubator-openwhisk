@@ -58,11 +58,7 @@ class DockerContainerFactory(instance: InstanceId,
                                userProvidedImage: Boolean,
                                memory: ByteSize,
                                cpuShares: Int)(implicit config: WhiskConfig, logging: Logging): Future[Container] = {
-    val image = if (userProvidedImage) {
-      actionImage.publicImageName
-    } else {
-      actionImage.localImageName(config.dockerRegistry, config.dockerImagePrefix, Some(config.dockerImageTag))
-    }
+    val image = actionImage.publicImageName
 
     DockerContainer.create(
       tid,
