@@ -13,18 +13,33 @@
   retries: "{{ docker.pull.retries }}"
   delay: "{{ docker.pull.delay }}"
 
-- name: "pull runtime action images with tag {{docker.image.tag}}"
-  shell: "docker pull {{docker_registry}}{{docker.image.prefix}}/{{item}}:{{docker.image.tag}}"
-  with_items: "{{ runtimesManifest.runtimes.values() | sum(start=[]) | selectattr('deprecated', 'equalto',false)  | map(attribute='image.name') | list | unique }}"
-  when: docker_registry != ""
+- name: "pull runtime action images per manifest"
+  shell: "docker pull {{docker_registry}}{{item.prefix | default(docker.image.prefix)}}/{{item.name}}:{{item.tag | default(docker.image.tag)}}"
+  with_items: "{{ runtimesManifest.runtimes.values() | sum(start=[]) | selectattr('deprecated', 'equalto',false)  | map(attribute='image') | list | unique }}"
+  when: docker_registry != "" or (item.prefix is defined and item.prefix != "") or (item.tag is defined and item.tag != "")
   retries: "{{ docker.pull.retries }}"
   delay: "{{ docker.pull.delay }}"
 
-- name: "pull blackboxes action images with tag {{docker.image.tag}}"
-  shell: "docker pull {{docker_registry}}{{docker.image.prefix}}/{{item.name}}:{{docker.image.tag}}"
+- name: "retag runtime action images with local {{docker.image.prefix}} and tag {{docker.image.tag}}"
+  shell: "docker tag {{docker_registry}}{{item.prefix}}/{{item.name}}:{{item.tag | default(docker.image.tag)}} {{docker.image.prefix}}/{{item.name}}:{{docker.image.tag}}"
+  with_items: "{{ runtimesManifest.runtimes.values() | sum(start=[]) | selectattr('deprecated', 'equalto',false)  | map(attribute='image') | list | unique }}"
+  when: (item.prefix is defined and item.prefix != "") or (item.tag is defined and item.tag != "")
+  retries: "{{ docker.pull.retries }}"
+  delay: "{{ docker.pull.delay }}"
+
+- name: "pull blackboxes action images per manifest"
+  shell: "docker pull {{docker_registry}}{{item.prefix | default(docker.image.prefix)}}/{{item.name}}:{{item.tag | default(docker.image.tag)}}"
   with_items:
     - "{{ runtimesManifest.blackboxes }}"
-  when: docker_registry != ""
+  when: docker_registry != "" or (item.prefix is defined and item.prefix != "") or (item.tag is defined and item.tag != "")
+  retries: "{{ docker.pull.retries }}"
+  delay: "{{ docker.pull.delay }}"
+
+- name: "retag blackboxes action images with local {{docker.image.prefix}} and tag {{docker.image.tag}}"
+  shell: "docker tag {{docker_registry}}{{item.prefix}}/{{item.name}}:{{item.tag | default(docker.image.tag)}} {{docker.image.prefix}}/{{item.name}}:{{docker.image.tag}}"
+  with_items:
+    - "{{ runtimesManifest.blackboxes }}"
+  when: (item.prefix is defined and item.prefix != "") or (item.tag is defined and item.tag != "")
   retries: "{{ docker.pull.retries }}"
   delay: "{{ docker.pull.delay }}"
 
